@@ -52,10 +52,16 @@
 ;; -- MINIMALIST ORG CAPTURE TEST --
 ;; NOTICE: This uses a hardcoded path on purpose to eliminate all other variables.
 (after! org
+  (setq org-directory "/Users/longgongmeishi/Nutstore Files/Obsidian/org/")
+  (setq org-agenda-files (directory-files-recursively org-directory "\\.org$"))
   (setq org-capture-templates
         '(("t" "Todo" entry
            (file+headline "/Users/longgongmeishi/Nutstore Files/Obsidian/org/inbox.org" "Inbox")
-           "* TODO %?"))))
+           "* TODO %?")))
+  (setq org-refile-targets '((org-agenda-files . (:maxlevel . 3))))
+  (setq org-refile-use-outline-path t)
+  (setq org-outline-path-complete-in-steps nil)
+  )
 
 ;; Whenever you reconfigure a package, make sure to wrap your config in an
 ;; `after!' block, otherwise Doom's defaults may override your settings. E.g.
