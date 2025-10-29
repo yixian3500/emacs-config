@@ -4,11 +4,13 @@
 
 ;; Place your private configuration here! Remember, you do not need to run 'doom
 ;; sync' after modifying this file!
+;;
 ;; ANDRIOD Specail Setting
-;; Hide the dir details
 (when (or (string-match-p "android" system-configuration)
           (getenv "TERMUX_VERSION")
           (file-directory-p "/data/data/com.termux/files"))
+  (setq vc-gzip-switches '("-c"))
+;;Termux/Android setting vc-gzip-switches
   (after! dired
     ;; Hide owner/group columns on the narrow Termux display.
     (add-hook 'dired-mode-hook #'dired-hide-details-mode)))
