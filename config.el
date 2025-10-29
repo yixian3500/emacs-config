@@ -6,7 +6,9 @@
 ;; sync' after modifying this file!
 ;; ANDRIOD Specail Setting
 ;; Hide the dir details
-(when (string-match-p "android" system-configuration)
+(when (or (string-match-p "android" system-configuration)
+          (getenv "TERMUX_VERSION")
+          (file-directory-p "/data/data/com.termux/files"))
   (after! dired
     ;; Hide owner/group columns on the narrow Termux display.
     (add-hook 'dired-mode-hook #'dired-hide-details-mode)))
