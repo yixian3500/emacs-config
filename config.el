@@ -45,12 +45,6 @@
 ;; change `org-directory'. It must be set before org loads!
 
 ;; -- ORG CAPTURE CONFIGURATION --
-
-;; 1. Set the main directory for Org files.
-;;(setq org-directory (expand-file-name "~/Nutstore Files/Obsidian/org/"))
-
-;; -- MINIMALIST ORG CAPTURE TEST --
-;; NOTICE: This uses a hardcoded path on purpose to eliminate all other variables.
 (after! org
   (setq org-directory "/Users/longgongmeishi/Nutstore Files/Obsidian/org/")
   (setq org-agenda-files (directory-files-recursively org-directory "\\.org$"))
@@ -119,3 +113,8 @@
   (setq interprogram-paste-function #'paste-from-osx-clipboard))
 ;;; ================================================================
 (setq evil-default-command-delay 0.05)
+;;
+(setq geiser-active-implementations '(racket)
+      geiser-default-implementation 'racket
+      geiser-racket-binary "/Applications/Racket v8.18/bin/racket"
+      geiser-repl-per-project-p t)
