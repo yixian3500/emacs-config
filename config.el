@@ -1,5 +1,7 @@
 ;;; $DOOMDIR/config.el -*- lexical-binding: t; -*-
 
+
+
 ;; Place your private configuration here! Remember, you do not need to run 'doom
 ;; sync' after modifying this file!
 
@@ -43,18 +45,35 @@
 ;; change `org-directory'. It must be set before org loads!
 
 ;; change `org-directory'. It must be set before org loads!
+(defconst yx-home
+  (or (getenv "HOME") (getenv "USERPROFILE"))
+  "Portable home directory")
 
-;; -- ORG CAPTURE CONFIGURATION --
+(defun yx-path (&rest parts)
+ (apply (if (fboundp 'file-name-concat) #'file-name-concat
+        (lambda (a b)(expand-file-name b a)))
+        parts))
+
+(defconst yx-org-base
+  (cond
+   ((eq system-type 'darwin) (yx-path yx-home "Nutstore Files/Obsidian/org"))
+   ((eq system-type 'gnu/linux) "/storage/emulated/0/Documents/obsidian/Obsidian/org")
+   (t (yx-path yx-home "org")))
+  "Root of all org file across platforms.")
+
+(defconst yx-org-inbox (expand-file-name "inbox.org" yx-org-base))
+(setq org-directory yx-org-base)
+
 (after! org
-  (setq org-directory "/Users/longgongmeishi/Nutstore Files/Obsidian/org/")
-  (setq org-agenda-files (directory-files-recursively org-directory "\\.org$"))
-  (setq org-capture-templates
-        '(("t" "Todo" entry
-           (file+headline "/Users/longgongmeishi/Nutstore Files/Obsidian/org/inbox.org" "Inbox")
+  ;;  (setq org-directory "/Users/longgongmeishi/Nutstore Files/Obsidian/org/")
+  (setq! org-agenda-files (directory-files-recursively org-directory "\\.org\\'"))
+  (setq! org-capture-templates
+        `(("t" "Todo" entry
+           (file+headline ,yx-org-inbox "Inbox")
            "* TODO %?")))
-  (setq org-refile-targets '((org-agenda-files . (:maxlevel . 3))))
-  (setq org-refile-use-outline-path t)
-  (setq org-outline-path-complete-in-steps nil)
+  (setq! org-refile-targets '((org-agenda-files . (:maxlevel . 3))))
+  (setq! org-refile-use-outline-path t)
+  (setq! org-outline-path-complete-in-steps nil)
   )
 
 ;; Whenever you reconfigure a package, make sure to wrap your config in an
@@ -114,7 +133,9 @@
 ;;; ================================================================
 (setq evil-default-command-delay 0.05)
 ;;
-(setq geiser-active-implementations '(racket)
+(after! geiser
+  (setq geiser-active-implementations '(racket)
       geiser-default-implementation 'racket
       geiser-racket-binary "/Applications/Racket v8.18/bin/racket"
       geiser-repl-per-project-p t)
+)
