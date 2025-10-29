@@ -4,6 +4,13 @@
 
 ;; Place your private configuration here! Remember, you do not need to run 'doom
 ;; sync' after modifying this file!
+;; ANDRIOD Specail Setting
+;; Hide the dir details
+(when (string-match-p "android" system-configuration)
+  (after! dired
+    ;; Hide owner/group columns on the narrow Termux display.
+    (add-hook 'dired-mode-hook #'dired-hide-details-mode)))
+
 
 
 ;; Some functionality uses this to identify you, e.g. GPG configuration, email
