@@ -9,7 +9,8 @@
 (when (or (string-match-p "android" system-configuration)
           (getenv "TERMUX_VERSION")
           (file-directory-p "/data/data/com.termux/files"))
-  (setq vc-gzip-switches '("-c"))
+ (after! vc
+        (setq vc-gzip-switches '("-c")))
 ;;Termux/Android setting vc-gzip-switches
   (after! dired
     ;; Hide owner/group columns on the narrow Termux display.
