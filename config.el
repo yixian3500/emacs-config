@@ -70,7 +70,8 @@
    ((eq system-type 'darwin) (yx-path yx-home "Nutstore Files/Obsidian/org"))
    ((or (eq system-type 'gnu/linux)
         (string-match-p "android" system-configuration))
-    "/storage/emulated/0/Documents/obsidian/Obsidian/org")
+;;    "/storage/emulated/0/Documents/obsidian/Obsidian/org")
+      "/storage/emulated/0/Documents/obsidian/Obsidian/org")
    (t (yx-path yx-home "org")))
   "Root of all org file across platforms.")
 
