@@ -16,8 +16,11 @@
     ;; Hide owner/group columns on the narrow Termux display.
     (add-hook 'dired-mode-hook #'dired-hide-details-mode)))
 
-
-
+;; add lisp dir
+(add-to-list 'load-path (expand-file-name "lisp" doom-user-dir))
+(autoload 'my/sync-note-via-script "notes-sync")
+(map! :leader
+      (:desc "Sync notes" "r s" #'my/sync-note-via-script))
 ;; Some functionality uses this to identify you, e.g. GPG configuration, email
 ;; clients, file templates and snippets. It is optional.
 ;; (setq user-full-name "John Doe"
