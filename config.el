@@ -18,9 +18,11 @@
 
 ;; add lisp dir
 (add-to-list 'load-path (expand-file-name "lisp" doom-user-dir))
-(autoload 'my/sync-note-via-script "notes-sync")
+(require 'notes-sync)
 (map! :leader
-      (:desc "Sync notes" "r s" #'my/sync-note-via-script))
+      (:prefix ("r" . "Run/Sync")
+       :desc "Sync notes push" "s" #'my/sync-note-push
+       :desc "Sync notes pull" "p" #'my/sync-note-pull))
 ;; Some functionality uses this to identify you, e.g. GPG configuration, email
 ;; clients, file templates and snippets. It is optional.
 ;; (setq user-full-name "John Doe"
