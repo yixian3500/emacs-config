@@ -33,12 +33,12 @@
       (setq buf
       (compilation-start cmd 'compilation-mode (lambda (_) bufname)))
       (with-current-buffer buf
-        (setq-local mode-name "Sync") ;; cosmetic if you even openit
+        (setq-local mode-name "sync") ;; cosmetic if you even openit
         ;;Replace the default finish message
         (setq-local compilation-exit-message-function
                     (lambda (status code _msg)
                       (let* ((ok (and (eq status 'exit) (zerop code)))
-                             (m (if ok "sync finished" (format "syncing failed (%s)" code))))
+                             (m (if ok "finished" (format "syncing failed (%s)" code))))
                         (message "%s" m)
                         ;; also return (message . face) for the buffer header
                         (cons m (if ok 'compilation-info 'compilation-error))))))))
