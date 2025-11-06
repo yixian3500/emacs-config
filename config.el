@@ -10,6 +10,7 @@
           (file-directory-p "/data/data/com.termux/files")))
 ;; Hide owner/group columns on the narrow Termux display.
 (when +on-termux-android
+  (after! dired
   (setq dired-hide-details-initially t)
   (add-hook! 'dired-mode-hook :append (dired-hide-details-mode 1))
   (add-hook! 'dired-after-readin-hook :append #'dired-hide-details-mode)
@@ -19,8 +20,8 @@
     (dirvish-override-dired-mode -1)
     (setq dirvish-attributes
           (cl-remove-if (lambda (sym) (memq sym '(file-user file-group file-owner)))
-                        dirvish-attributes)))
-)
+                        dirvish-attributes))))
+  )
 ;; add lisp dir
 (add-to-list 'load-path (expand-file-name "lisp" doom-user-dir))
 (require 'notes-sync)
