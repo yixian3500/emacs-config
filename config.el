@@ -4,12 +4,12 @@
 ;; sync' after modifying this file!
 ;;
 ;; ANDRIOD Specail Setting
-(defconst +on-termux-andriod
+(defconst +on-termux-android
   (or (string-match-p "android" system-configuration)
           (getenv "TERMUX_VERSION")
           (file-directory-p "/data/data/com.termux/files")))
 ;; Hide owner/group columns on the narrow Termux display.
-(when +on-termux-andriod
+(when +on-termux-android
   (setq dired-hide-details-initially t)
   (add-hook! 'dired-mode-hook :append (dired-hide-details-mode 1))
   (add-hook! 'dired-after-readin-hook :append #'dired-hide-details-mode)
