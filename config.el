@@ -1,23 +1,20 @@
 ;;; $DOOMDIR/config.el -*- lexical-binding: t; -*-
 
-
-
 ;; Place your private configuration here! Remember, you do not need to run 'doom
 ;; sync' after modifying this file!
 ;;
 ;; ANDRIOD Specail Setting
-(when (or (string-match-p "android" system-configuration)
+(defconst +on-termux-andriod
+  (or (string-match-p "android" system-configuration)
           (getenv "TERMUX_VERSION")
-          (file-directory-p "/data/data/com.termux/files"))
-;;Termux/Android setting vc-gzip-switches
- (after! vc
-        (setq vc-gzip-switches '("-c")))
+          (file-directory-p "/data/data/com.termux/files")))
 ;; Hide owner/group columns on the narrow Termux display.
-  (add-hook! 'dired-mode-hook
-             (lambda ()
-               (dired-hide-details-mode 1)))
-)
+(when +on-termux-andriod
+  (setq dired-hide-details-initially t)
+  (add-hook! 'dired-mode-hook :append (dired-hide-details-mode 1))
+  (add-hook! 'dired-after-readin-hook :append #'dired-hide-details-mode)
 
+  (setq dired-listing-switches "-Alh --group-directories-first -g -o")
 ;; add lisp dir
 (add-to-list 'load-path (expand-file-name "lisp" doom-user-dir))
 (require 'notes-sync)
