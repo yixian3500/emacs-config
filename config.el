@@ -9,12 +9,13 @@
 (when (or (string-match-p "android" system-configuration)
           (getenv "TERMUX_VERSION")
           (file-directory-p "/data/data/com.termux/files"))
+;;Termux/Android setting vc-gzip-switches
  (after! vc
         (setq vc-gzip-switches '("-c")))
-;;Termux/Android setting vc-gzip-switches
-  (after! dired
-    ;; Hide owner/group columns on the narrow Termux display.
-    (add-hook 'dired-mode-hook #'dired-hide-details-mode)))
+;; Hide owner/group columns on the narrow Termux display.
+  (use-package! dired
+    :hook (dired-mode . dired-hide-details-mode)
+   ))
 
 ;; add lisp dir
 (add-to-list 'load-path (expand-file-name "lisp" doom-user-dir))
