@@ -13,9 +13,10 @@
  (after! vc
         (setq vc-gzip-switches '("-c")))
 ;; Hide owner/group columns on the narrow Termux display.
-  (use-package! dired
-    :hook (dired-mode . dired-hide-details-mode)
-   ))
+  (add-hook! 'dired-mode-hook
+             (lambda ()
+               (dired-hide-details-mode 1)))
+)
 
 ;; add lisp dir
 (add-to-list 'load-path (expand-file-name "lisp" doom-user-dir))
