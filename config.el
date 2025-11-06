@@ -15,6 +15,8 @@
   (add-hook! 'dired-after-readin-hook :append #'dired-hide-details-mode)
 
   (setq dired-listing-switches "-Alh --group-directories-first -g -o")
+  (with-eval-after-load 'dirvish
+    (dirvish-override-dired-mode -1)
 )
 ;; add lisp dir
 (add-to-list 'load-path (expand-file-name "lisp" doom-user-dir))
