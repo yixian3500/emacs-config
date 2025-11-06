@@ -17,7 +17,10 @@
   (setq dired-listing-switches "-Alh --group-directories-first -g -o")
   (with-eval-after-load 'dirvish
     (dirvish-override-dired-mode -1)
-))
+    (setq dirvish-attributes
+          (cl-remove-if (lambda (sym) (memq sym '(file-user file-group file-owner)))
+                        dirvish-attributes)))
+)
 ;; add lisp dir
 (add-to-list 'load-path (expand-file-name "lisp" doom-user-dir))
 (require 'notes-sync)
