@@ -15,6 +15,7 @@
   (add-hook! 'dired-after-readin-hook :append #'dired-hide-details-mode)
 
   (setq dired-listing-switches "-Alh --group-directories-first -g -o")
+)
 ;; add lisp dir
 (add-to-list 'load-path (expand-file-name "lisp" doom-user-dir))
 (require 'notes-sync)
