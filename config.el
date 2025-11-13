@@ -89,14 +89,34 @@
 
 (defconst yx-org-inbox (expand-file-name "inbox.org" yx-org-base))
 (setq org-directory yx-org-base)
-
+  ;;  "Prompt for a project and set capture target to its Daily Progress Log heading."
+(defun yx/org-capture-progress-file ()
+  "Prompt for a project and set capture target to its Daily Progress Log heading."
+  (let* ((project-list '("guanyin25"
+                         "coca-2w-words"
+                         ))
+         (project (completing-read "Choose Project: " project-list nil t))
+         (file (expand-file-name (format "projects/%s.org" project)
+                                 org-directory)))
+    (unless (file-exists-p file)
+      (make-directory (file-name-directory file) t)
+      (with-temp-buffer
+        (insert "* Daily Progress Log\n")
+        (write-file file)))
+      file))
+    ;; Ensure file exists and, if empty, initialize it with the heading
 (after! org
   ;;  (setq org-directory "/Users/longgongmeishi/Nutstore Files/Obsidian/org/")
   (setq! org-agenda-files (directory-files-recursively org-directory "\\.org\\'"))
   (setq! org-capture-templates
         `(("t" "Todo" entry
            (file+headline ,yx-org-inbox "Inbox")
-           "* TODO %?")))
+           "* TODO %?")
+        ("p" "Progress" entry
+         (file yx/org-capture-progress-file)
+         "*** %<%Y-%m-%d %a> - %? \n:PROPERTIES:\n:Date: %<%Y-%m-%d>\n:Count: \n:END:"
+         :empty-lines 1)
+                    ))
   (setq! org-refile-targets '((org-agenda-files . (:maxlevel . 3))))
   (setq! org-refile-use-outline-path t)
   (setq! org-outline-path-complete-in-steps nil)
