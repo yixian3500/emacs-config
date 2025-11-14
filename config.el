@@ -2,26 +2,26 @@
 
 ;; Place your private configuration here! Remember, you do not need to run 'doom
 ;; sync' after modifying this file!
-;;
 ;; ANDRIOD Specail Setting
 (defconst +on-termux-android
   (or (string-match-p "android" system-configuration)
           (getenv "TERMUX_VERSION")
           (file-directory-p "/data/data/com.termux/files")))
+
+(after! dired
+  (ignore-errors
+    (advice-remove #'dired-find-file #'dirvish-find-entry-a)))
+
 ;; Hide owner/group columns on the narrow Termux display.
 (when +on-termux-android
   (after! dired
   (setq dired-hide-details-initially t)
-  (add-hook! 'dired-mode-hook :append (dired-hide-details-mode 1))
+  (add-hook! 'dired-mode-hook :append #'dired-hide-details-mode )
   (add-hook! 'dired-after-readin-hook :append #'dired-hide-details-mode)
 
-  (setq dired-listing-switches "-Alh --group-directories-first -g -o")
-  (with-eval-after-load 'dirvish
-    (dirvish-override-dired-mode -1)
-    (setq dirvish-attributes
-          (cl-remove-if (lambda (sym) (memq sym '(file-user file-group file-owner)))
-                        dirvish-attributes))))
-  )
+  (setq dired-listing-switches "-Alh --group-directories-first -g -o"))
+)
+
 ;; add lisp dir
 (add-to-list 'load-path (expand-file-name "lisp" doom-user-dir))
 (require 'notes-sync)
