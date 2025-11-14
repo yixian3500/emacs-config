@@ -120,6 +120,8 @@
   (setq! org-refile-targets '((org-agenda-files . (:maxlevel . 3))))
   (setq! org-refile-use-outline-path t)
   (setq! org-outline-path-complete-in-steps nil)
+  ;; add done-log for org
+  (setq org-log-done 'time)
   )
 
 ;; Whenever you reconfigure a package, make sure to wrap your config in an
