@@ -256,27 +256,30 @@
   (add-hook 'prog-mode-hook #'minuet-auto-suggestion-mode)
   :config
   (setq minuet-provider 'openai-compatible
-        minuet-request-timeout 2.5
-        minuet-auto-suggestion-throttle-delay 1.0
+        minuet-request-timeout 10
+        minuet-show-error-message-on-minibuffer t
+        minuet-auto-suggestion-throttle-delay 1.5
         minuet-auto-suggestion-debounce-delay 0.6
         minuet-n-completions 1
         minuet-context-window 768)
 
-  (plist-put minuet-openai-compatible-options :name "OpenRouter")
+  (plist-put minuet-openai-compatible-options :name "Huawei-DeepSeek-V3.2")
   (plist-put minuet-openai-compatible-options
-             :end-point "https://openrouter.ai/api/v1/chat/completions")
-  (plist-put minuet-openai-compatible-options :api-key "OPENROUTER_API_KEY")
-  (plist-put minuet-openai-compatible-options :model "moonshotai/kimi-k2")
-  (minuet-set-optional-options minuet-openai-compatible-options :provider '(:sort "throughput"))
+             :end-point "https://api.modelarts-maas.com/v2/chat/completions")
+  (plist-put minuet-openai-compatible-options :api-key "HW_API_KEY")
+  (plist-put minuet-openai-compatible-options :model "deepseek-v3.2-vy7ggp")
   (minuet-set-optional-options minuet-openai-compatible-options :max_tokens 96)
   (minuet-set-optional-options minuet-openai-compatible-options :top_p 0.9)
 
   (map! :map minuet-active-mode-map
         "M-p" #'minuet-previous-suggestion
         "M-n" #'minuet-next-suggestion
-        "M-A" #'minuet-accept-suggestion
-        "M-a" #'minuet-accept-suggestion-line
-        "M-e" #'minuet-dismiss-suggestion))
+        "M-]" #'minuet-accept-suggestion
+        "M-[" #'minuet-accept-suggestion-line
+        "M-e" #'minuet-dismiss-suggestion)
+
+  (map! :i "M-i" #'minuet-show-suggestion
+        :i "M-y" #'minuet-complete-with-minibuffer))
 
 ;; for gptel
 (use-package! gptel
