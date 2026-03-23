@@ -56,7 +56,7 @@
 ;; available. You can either set `doom-theme' or manually load a theme with the
 ;; `load-theme' function. This is the default:
 ;;(setq doom-theme 'doom-one)
-(setq doom-theme 'doom-challenger-deep)
+(setq doom-theme 'doom-dracula)
 
 ;; This determines the style of line numbers in effect. If set to `nil', line
 ;; numbers are disabled. For relative line numbers, set this to `relative'.
@@ -127,6 +127,47 @@
           (sequence "WAITING(w)" "BLOCKED(b)" "|" "CANCELLED(c)")))
   )
 
+;; Configure Org-Roam and Org-Roam Dailies
+;; -------------------------------------------------------------------------
+(after! org-roam
+  ;; -----------------------------------------------------------------------
+  ;; 1. basic path setting
+  ;; -----------------------------------------------------------------------
+  (setq org-roam-directory yx-org-base
+        org-roam-db-location (expand-file-name "org-roam.db" yx-org-base))
+  ;; -----------------------------------------------------------------------
+  ;; 2. Normal Note  Capture template
+  ;; -----------------------------------------------------------------------
+ (setq org-roam-capture-templates
+        `(("d" "default" plain "%?"
+           :if-new (file+head "${slug}.org" "#+title: ${title}\n")
+           :unnarrowed t)))
+ ;; -----------------------------------------------------------------------
+ ;; 3. Dailies Setting
+ ;; -----------------------------------------------------------------------
+  (setq org-roam-dailies-directory "daily/"
+        org-roam-dailies-capture-templates
+        `(("d" "daily" plain
+           (file ,(expand-file-name "daily/template_2025.org" yx-org-base))
+           :if-new (file+head "%<%Y-%m-%d>.org" "#+title: %<%Y-%m-%d>\n")
+           ;;:unnarrowed t
+           :immediate-finish nil
+           )))
+  ;; -----------------------------------------------------------------------
+  (map! :leader
+        (:prefix ("t" . "Notes")
+         :desc "Find daily"      "d" #'org-roam-dailies-goto-date
+         :desc "Find tomorrow"   "t" #'org-roam-dailies-goto-tomorrow
+         :desc "Find yesterday"  "y" #'org-roam-dailies-goto-yesterday
+         :desc "Find today"      "n" #'org-roam-dailies-goto-today
+         :desc "Capture today"   "N" #'org-roam-dailies-capture-today
+         :desc "Find node"       "f" #'org-roam-node-find
+         :desc "Insert node"     "i" #'org-roam-node-insert)))
+
+;; for the org-babel python3 setting
+(setq org-babel-python-command "python3")
+(setq python-shell-interpreter "python3")
+
 ;; Whenever you reconfigure a package, make sure to wrap your config in an
 ;; `after!' block, otherwise Doom's defaults may override your settings. E.g.
 ;;
@@ -161,9 +202,13 @@
 ;; they are implemented.
 ;;
 ;;set markdown color
-(when (not (display-graphic-p))
-  (custom-set-faces!
-   '(default :foreground "#ffd8af")))
+;(when (not (display-graphic-p))
+;  (custom-set-faces!
+;   '(default :foreground "#ffd8af")))
+ (custom-set-faces!
+  '(region :background "#44475a" :foreground "#ffffff")
+  ;; '(region :background "#6272a4" :foreground "#ffffff")
+)
 ;;set the clipboard for macos
 ;;; --- macOS Specific Settings ---
 (when (and (string-equal system-type "darwin") (not (display-graphic-p)))
@@ -184,9 +229,118 @@
 ;;; ================================================================
 (setq evil-default-command-delay 0.05)
 ;;
+;;
+(when (string-equal system-type "darwin")
+
+(use-package! exec-path-from-shell
+  :when (memq window-system '(mac ns))
+  :config
+  (dolist (var '("PATH" "HW_API_KEY" "OPENROUTER_API_KEY"))
+    (add-to-list 'exec-path-from-shell-variables var))
+  (exec-path-from-shell-initialize))
+
 (after! geiser
   (setq geiser-active-implementations '(racket)
       geiser-default-implementation 'racket
       geiser-racket-binary "/Applications/Racket v8.18/bin/racket"
       geiser-repl-per-project-p t)
+)
+;; for agent-shell
+(after! agent-shell
+(setq agent-shell-google-authentication (agent-shell-google-make-authentication :login t)))
+
+;; for minuet
+(use-package! minuet
+  :defer t
+  :init
+  (add-hook 'prog-mode-hook #'minuet-auto-suggestion-mode)
+  :config
+  (setq minuet-provider 'openai-compatible
+        minuet-request-timeout 2.5
+        minuet-auto-suggestion-throttle-delay 1.0
+        minuet-auto-suggestion-debounce-delay 0.6
+        minuet-n-completions 1
+        minuet-context-window 768)
+
+  (plist-put minuet-openai-compatible-options :name "OpenRouter")
+  (plist-put minuet-openai-compatible-options
+             :end-point "https://openrouter.ai/api/v1/chat/completions")
+  (plist-put minuet-openai-compatible-options :api-key "OPENROUTER_API_KEY")
+  (plist-put minuet-openai-compatible-options :model "moonshotai/kimi-k2")
+  (minuet-set-optional-options minuet-openai-compatible-options :provider '(:sort "throughput"))
+  (minuet-set-optional-options minuet-openai-compatible-options :max_tokens 96)
+  (minuet-set-optional-options minuet-openai-compatible-options :top_p 0.9)
+
+  (map! :map minuet-active-mode-map
+        "M-p" #'minuet-previous-suggestion
+        "M-n" #'minuet-next-suggestion
+        "M-A" #'minuet-accept-suggestion
+        "M-a" #'minuet-accept-suggestion-line
+        "M-e" #'minuet-dismiss-suggestion))
+
+;; for gptel
+(use-package! gptel
+  :init
+  (load! "gptel-prompts.el")
+  :config
+  (setq gptel-api-key (getenv "HW_API_KEY"))
+  (setq gptel-model 'deepseek-v3.2)
+
+  (gptel-make-openai "Huawei-DeepSeek-V3.2"
+    :host "api.modelarts-maas.com"
+    :endpoint "/v2/chat/completions"
+    :stream t
+    :key (getenv "HW_API_KEY")
+    :models '(
+              (deepseek-v3.2-exp . "deepseek-v3.2-exp-BUN0bx")
+              (deepseek-v3.2     . "deepseek-v3.2-vy7ggp")))
+
+  (gptel-make-ollama "Ollama"
+    :host "localhost:11434"
+    :stream t
+    :models '(
+              (qwen3:8b    . "qwen3:8b")
+              (qwen3.5:9b  . "qwen3.5:9b")
+              (qwen-vl-8b . "qwen3-vl:8b")))
+
+  (gptel-make-openai "openrouter"
+    :host "openrouter.ai"
+    :endpoint "/api/v1/chat/completions"
+    :stream t
+    :key (getenv "OPENROUTER_API_KEY")
+    :models '(
+            (gpt-5.2    . "openai/gpt-5.2")
+            (gemini-3-pro-preview . "google/gemini-3-pro-preview")
+            (minimax-m2.5 . "minimax/minimax-m2.5")
+            (grok-4.1-fast . "x-ai/grok-4.1-fast")
+            (gemini-3-flash-preview . "google/gemini-3-flash-preview")))
+
+  (setq gptel-backend (gptel-get-backend "Huawei-DeepSeek-V3.2")
+        gptel-default-mode 'org-mode)
+
+  (map! :map gptel-mode-map
+        "C-c m" #'gptel-menu)
+  )
+
+(map! :leader
+      :desc "GPTel send"
+      "v s" #'gptel-send)
+
+(map! :leader
+      (:prefix ("v" . "ai")
+       :desc "Minuet complete" "m" #'minuet-complete-with-minibuffer
+       :desc "Minuet suggest" "i" #'minuet-show-suggestion
+       :desc "Minuet configure" "M" #'minuet-configure-provider))
+
+(add-to-list 'auto-mode-alist '("\\.ets\\'" . tsx-ts-mode))
+(setq treesit-font-lock-level 4)
+
+(use-package! sdcv
+  :config
+  (setq sdcv-say-word-p nil)
+  (map! :leader
+    (:prefix ("d" . "dictionary")
+     :desc "Lookup typed word" "s" #'sdcv-search-input
+     :desc "Lookup word at point" "S" #'sdcv-search-pointer))
+  )
 )

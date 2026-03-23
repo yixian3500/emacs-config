@@ -52,6 +52,7 @@
 ;; (unpin! pinned-package another-pinned-package)
 ;; ...Or *all* packages (NOT RECOMMENDED; will likely break things)
 ;; (unpin! t)
+(when IS-MAC
 (unpin! geiser geiser-racket)
 (package! geiser)
 (package! geiser-racket)
@@ -60,3 +61,8 @@
 (package! shell-maker)   ;
 (package! acp)           ;
 (package! agent-shell)   ;
+
+(package! gptel);
+(package! minuet)
+)
+(package! sdcv)
